@@ -195,6 +195,7 @@ requirements.
 | [Development](docs/development.md) | Repository layout, tests, and release workflow |
 | [Claude Code and Codex compatibility](docs/claude-code-compatibility.md) | Capability classifications, tested adaptations, and non portable boundaries |
 | [Roadmap](ROADMAP.md) | Current priorities, contribution ideas, and non goals |
+| [Vision](VISION.md) | Why the RooseveltAdvisors fork exists, what it carries beyond upstream, and what it must never diverge on |
 
 Project policies and history are in [CONTRIBUTING.md](CONTRIBUTING.md), [GOVERNANCE.md](GOVERNANCE.md), [MAINTAINERS.md](MAINTAINERS.md), [SECURITY.md](SECURITY.md), [SUPPORT.md](SUPPORT.md), and [CHANGELOG.md](CHANGELOG.md).
 
