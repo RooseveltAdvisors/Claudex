@@ -122,13 +122,8 @@ if (releaseHeadings.length === 0) {
   if (latestVersion !== manifest.version) {
     failures.push(`CHANGELOG latest released version ${latestVersion} does not match package version ${manifest.version}`);
   }
-  // RooseveltAdvisors/Claudex releases its own versions from the house fork,
-  // so compare links for released versions may point at either this fork or
-  // upstream BeamoINT/Claudex.
-  const compareRepos = ['RooseveltAdvisors/Claudex', 'BeamoINT/Claudex'];
-  const expectedUnreleased = compareRepos
-    .map((repo) => `https://github.com/${repo}/compare/v${latestVersion}...HEAD`);
-  if (!expectedUnreleased.includes(releaseLinks.get('Unreleased'))) {
+  const expectedUnreleased = `https://github.com/BeamoINT/Claudex/compare/v${latestVersion}...HEAD`;
+  if (releaseLinks.get('Unreleased') !== expectedUnreleased) {
     failures.push(`CHANGELOG Unreleased link must compare v${latestVersion} to HEAD`);
   }
 
@@ -136,10 +131,10 @@ if (releaseHeadings.length === 0) {
     const version = releaseHeadings[index];
     const previousVersion = releaseHeadings[index + 1];
     const expected = previousVersion
-      ? compareRepos.map((repo) => `https://github.com/${repo}/compare/v${previousVersion}...v${version}`)
-      : compareRepos.map((repo) => `https://github.com/${repo}/releases/tag/v${version}`);
-    if (!expected.includes(releaseLinks.get(version))) {
-      failures.push(`CHANGELOG link for ${version} must be ${expected[0]}`);
+      ? `https://github.com/BeamoINT/Claudex/compare/v${previousVersion}...v${version}`
+      : `https://github.com/BeamoINT/Claudex/releases/tag/v${version}`;
+    if (releaseLinks.get(version) !== expected) {
+      failures.push(`CHANGELOG link for ${version} must be ${expected}`);
     }
   }
 
