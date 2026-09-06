@@ -15,7 +15,12 @@ coverage/
 .pytest_cache/
 node_modules/
 dist/
-.claude/
+.claude/*
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/verify/
+.claude/skills/verify/*
+!.claude/skills/verify/SKILL.md
 .codex/
 .config/claudex/
 auth.json
@@ -31,3 +36,5 @@ todos/
 backups/
 statusline-cache/
 usage-cache/
+.backpass/
+evidence/

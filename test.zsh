@@ -2090,6 +2090,11 @@ mkdir -p "$node_migration_home/.config/claudex" "$node_migration_home/.codex" "$
 cp "$tmp/home/.codex/auth.json" "$node_migration_home/.codex/auth.json"
 for command in claude codex curl; do ln -s "$tmp/bin/$command" "$node_migration_bin/$command"; done
 ln -s "$(command -v jq)" "$node_migration_bin/jq"
+# Hosts with a system Node on /usr/bin would satisfy the compatibility probe
+# and skip the migration. Shadow it with an incompatible stub; the fake brew
+# below replaces it with the real managed runtime.
+printf '%s\n' '#!/usr/bin/env bash' 'exit 1' > "$node_migration_bin/node"
+chmod +x "$node_migration_bin/node"
 cat > "$node_migration_bin/brew" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
