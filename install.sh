@@ -635,7 +635,13 @@ settings_tmp=""
 
 install_method="${CLAUDEX_INSTALL_METHOD:-}"
 if [[ -z "$install_method" ]]; then
-  if [[ -d "$root/.git" ]]; then install_method=git; else install_method=archive; fi
+  # A linked git worktree stores a "gitdir: path" pointer file instead of the
+  # .git directory; it is still a git checkout, not an archive install.
+  if [[ -d "$root/.git" || "$(head -c 8 "$root/.git" 2>/dev/null)" == 'gitdir: ' ]]; then
+    install_method=git
+  else
+    install_method=archive
+  fi
 fi
 [[ "$install_method" =~ ^(homebrew|scoop|winget|archive|git)$ ]] || fail "unsupported CLAUDEX_INSTALL_METHOD: $install_method"
 install_version=$(jq -r '.version' "$root/package.json")

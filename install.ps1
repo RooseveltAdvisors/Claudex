@@ -765,7 +765,13 @@ Write-TextAtomic $settingsTarget ($settings | ConvertTo-Json -Depth 100)
 $packageManifest = Get-Content -LiteralPath (Join-Path $root 'package.json') -Raw | ConvertFrom-Json
 $installVersion = [string] $packageManifest.version
 if ($installVersion -notmatch '^\d+\.\d+\.\d+$') { Fail 'package.json contains an invalid Claudex version' }
-$installMethod = if ($env:CLAUDEX_INSTALL_METHOD) { $env:CLAUDEX_INSTALL_METHOD } elseif (Test-Path -LiteralPath (Join-Path $root '.git') -PathType Container) { 'git' } else { 'archive' }
+# A linked git worktree stores a "gitdir: path" pointer file instead of the
+# .git directory; it is still a git checkout, not an archive install.
+$gitPointer = Join-Path $root '.git'
+$isGitCheckout = (Test-Path -LiteralPath $gitPointer -PathType Container) -or
+  ((Test-Path -LiteralPath $gitPointer -PathType Leaf) -and
+    ((Get-Content -LiteralPath $gitPointer -TotalCount 1) -like 'gitdir: *'))
+$installMethod = if ($env:CLAUDEX_INSTALL_METHOD) { $env:CLAUDEX_INSTALL_METHOD } elseif ($isGitCheckout) { 'git' } else { 'archive' }
 if ($installMethod -notin @('homebrew', 'scoop', 'winget', 'archive', 'git')) { Fail "unsupported CLAUDEX_INSTALL_METHOD: $installMethod" }
 $receipt = [ordered]@{ schema = 1; version = $installVersion; method = $installMethod; binDir = $binDir; repository = 'BeamoINT/Claudex' }
 Write-TextAtomic $installReceiptTarget (($receipt | ConvertTo-Json -Compress) + "`n")
